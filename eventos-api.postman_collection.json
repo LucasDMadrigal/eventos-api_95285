@@ -68,7 +68,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "sessions", "register"]
             },
-            "description": "Registra un nuevo usuario. Campos requeridos: first_name, last_name, email (único), password (se guarda hasheado con bcrypt).\n\nRespuestas:\n- 201 { message: 'success', payload: user }\n- 409 { message } si hay error (ej. email duplicado o faltan campos)."
+            "description": "Registra un nuevo usuario. Campos requeridos: first_name, last_name, email (único), password (se guarda hasheado con bcrypt).\n\nRespuestas:\n- 201 { status: 'success', payload: { id, first_name, last_name, email, role } } (nunca el password)\n- 409 { message } si hay error (ej. email duplicado o faltan campos)."
           },
           "response": []
         },
@@ -96,7 +96,49 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "sessions", "login"]
             },
-            "description": "Inicia sesión con email y password.\n\nRespuestas:\n- 200 { message: 'success', payload: user }\n- 409 { message: 'Credenciales inválidas' } si la contraseña no coincide."
+            "description": "Inicia sesión con email y password. Si sale bien, guarda el JWT en la cookie HTTP Only `currentUser` (el token NO viaja en el body). Postman guarda la cookie solo: no hace falta copiarla.\n\nRespuestas:\n- 200 { status: 'success', message: 'Login correcto' }\n- 400 { status: 'error', message: 'Email y contraseña son obligatorios' }\n- 401 { status: 'error', message: 'Credenciales inválidas' } (email inexistente o password incorrecta)\n- 500 { status: 'error', message: 'Error interno del servidor' }"
+          },
+          "response": []
+        },
+        {
+          "name": "Current",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/current",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "current"]
+            },
+            "description": "Ruta privada: devuelve los datos del token guardado en la cookie `currentUser`.\n\nRespuestas:\n- 200 { status: 'success', payload: { id, email, role, iat, exp } }\n- 401 { status: 'error', message: 'No autenticado' } (sin cookie)\n- 401 { status: 'error', message: 'Token inválido o expirado' }"
+          },
+          "response": []
+        },
+        {
+          "name": "Profile (práctica)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "profile"]
+            },
+            "description": "Ejemplo de ruta privada protegida con authMiddleware.\n\nRespuestas:\n- 200 { status: 'success', message: 'Ruta privada OK', payload: req.user }\n- 401 igual que /current"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "logout"]
+            },
+            "description": "Borra la cookie `currentUser`. Después de esto, /current responde 401.\n\nRespuestas:\n- 200 { status: 'success', message: 'Logout correcto' }"
           },
           "response": []
         }

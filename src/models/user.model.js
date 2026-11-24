@@ -1,3 +1,4 @@
+// Model: define la forma de un usuario en MongoDB (campos, tipos y validaciones).
 import { Schema, model } from "mongoose";
 
 const UserSchema = new Schema({
@@ -23,8 +24,13 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         trim: true
+    },
+    // El rol viaja dentro del token; más adelante lo usaremos para autorizar (user, organizer, admin)
+    role: {
+        type: String,
+        enum: ["user", "organizer", "admin"],
+        default: "user"
     }
-    // el campo role lo veremos más adelante
 });
 
 export const userModel = model("Users", UserSchema);
