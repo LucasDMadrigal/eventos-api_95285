@@ -1,9 +1,11 @@
 import express from 'express';
 import sessionsRouter from "./routes/sessions.router.js";
 import eventsRouter from "./routes/events.router.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.get('/api/health', (req, res) => {
   res.status(200).send('Health check passed!');

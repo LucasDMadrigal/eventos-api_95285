@@ -1,0 +1,106 @@
+{
+  "info": {
+    "name": "Eventos API",
+    "description": "Colección de endpoints disponibles en eventos-api.\n\nBase URL configurable mediante la variable `baseUrl` (por defecto http://localhost:3000).\n\nNota: el router /api/events está montado pero todavía no tiene endpoints definidos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "juan.perez@example.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "123456",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Verifica que el servidor esté levantado. Responde 200 con el texto 'Health check passed!'."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Pérez\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "register"]
+            },
+            "description": "Registra un nuevo usuario. Campos requeridos: first_name, last_name, email (único), password (se guarda hasheado con bcrypt).\n\nRespuestas:\n- 201 { message: 'success', payload: user }\n- 409 { message } si hay error (ej. email duplicado o faltan campos)."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "login"]
+            },
+            "description": "Inicia sesión con email y password.\n\nRespuestas:\n- 200 { message: 'success', payload: user }\n- 409 { message: 'Credenciales inválidas' } si la contraseña no coincide."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

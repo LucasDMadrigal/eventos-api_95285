@@ -1,5 +1,5 @@
 import SessionDao from "../dao/session.dao.js";
-import { hashPassword, verifyPassword } from "../utils.js";
+import { hashPassword, verifyPassword } from "../utils/hash.utils.js";
 
 class SessionRepository {
     constructor(dao = SessionDao) {
@@ -12,8 +12,9 @@ class SessionRepository {
 
     async login(userData) {
         const user = await this.dao.find(userData.email);
+        if (user == null) throw new Error("Credenciales inválidas");
         const verify = await verifyPassword(userData.password, user.password);
-        if (!verify || user == null) throw new Error("Credenciales inválidas");
+        if (!verify) throw new Error("Credenciales inválidas");
         return user;
     }
 }
